@@ -31,6 +31,11 @@ werkzeug = "==2.2.3"
 wtforms = "==3.0.1"
 virtualenv = "*"
 virtualenv-clone = "*"
+flask-login = "*"
+email-validator = "*"
+flask-mail = "*"
+pyjwt = "*"
+flask-bootstrap = "*"
 
 [dev-packages]
 
