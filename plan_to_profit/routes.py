@@ -1,4 +1,12 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request
+from flask import (
+    Blueprint,
+    current_app,
+    render_template,
+    flash,
+    redirect,
+    url_for,
+    request,
+)
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
@@ -10,7 +18,7 @@ from plan_to_profit.forms import (
     ResetPasswordRequestForm,
     ResetPasswordForm,
 )
-from plan_to_profit.models import User, db
+from plan_to_profit.models import User, db, Client
 
 plan_to_profit = Blueprint(
     "plan_to_profit", __name__, template_folder="templates"
@@ -116,3 +124,46 @@ def reset_password(token):
         flash("Your password has been reset.")
         return redirect(url_for("plan_to_profit.login"))
     return render_template("reset_password.html", form=form)
+
+
+@plan_to_profit.route("/clients_list")
+@login_required
+def clients_list():
+    page = request.args.get("page", 1, type=int)
+    clients = current_user.clients.order_by(Client.name.asc()).paginate(
+        page=page,
+        per_page=current_app.config["CLIENTS_PER_PAGE"],
+        error_out=False,
+    )
+    next_url = (
+        url_for(
+            "plan_to_profit.clients_list",
+            username=user.username,
+            page=clients.next_num,
+        )
+        if clients.has_next
+        else None
+    )
+    prev_url = (
+        url_for(
+            "plan_to_profit.clients_list",
+            username=user.username,
+            page=clients.prev_num,
+        )
+        if clients.has_prev
+        else None
+    )
+    return render_template(
+        "clients_list.html",
+        title="Clients List",
+        user=user,
+        clients=clients.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
+
+
+@plan_to_profit.route("/edit_client", methods=["GET", "POST"])
+@login_required
+def edit_client():
+    return None

@@ -8,6 +8,7 @@ from flask_login import UserMixin, LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from jwt import PyJWTError
+from sqlalchemy_utils import PhoneNumber
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -22,6 +23,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    clients = db.relationship("Client", backref="user", lazy=True)
 
     def __str__(self):
         return "<User {}>".format(self.username)
@@ -60,3 +62,19 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), index=True, unique=True)
+    _phone_number = db.Column(db.Unicode(20))
+    phone_country_code = db.Column(db.Unicode(8))
+    phone_number = db.orm.composite(
+        PhoneNumber, _phone_number, phone_country_code
+    )
+    email = db.Column(db.String(120), index=True, unique=True)
+    contact_details = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __str__(self):
+        return "<Client {}>".format(self.name)

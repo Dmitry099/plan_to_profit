@@ -36,6 +36,7 @@ email-validator = "*"
 flask-mail = "*"
 pyjwt = "*"
 flask-bootstrap = "*"
+sqlalchemy-utils = "*"
 
 [dev-packages]
 

@@ -24,6 +24,7 @@
                     <li><a href="{{ url_for('plan_to_profit.login') }}">Login</a></li>
                     {% else %}
                     <li><a href="{{ url_for('plan_to_profit.user', username=current_user.username) }}">Profile</a></li>
+                    <li><a href="{{ url_for('plan_to_profit.clients_list') }}">Client List</a></li>
                     <li><a href="{{ url_for('plan_to_profit.logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
