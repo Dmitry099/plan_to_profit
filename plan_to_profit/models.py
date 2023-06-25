@@ -8,7 +8,7 @@ from flask_login import UserMixin, LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from jwt import PyJWTError
-from sqlalchemy_utils import PhoneNumber
+from sqlalchemy_utils import PhoneNumber, CountryType
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -23,7 +23,10 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    clients = db.relationship("Client", backref="user", lazy=True)
+    clients = db.relationship("Client", backref="user", lazy="dynamic")
+    photo_places = db.relationship(
+        "PhotoPlace", backref="user", lazy="dynamic"
+    )
 
     def __str__(self):
         return "<User {}>".format(self.username)
@@ -78,3 +81,15 @@ class Client(db.Model):
 
     def __str__(self):
         return "<Client {}>".format(self.name)
+
+
+class PhotoPlace(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), index=True, unique=True)
+    country = db.Column(CountryType)
+    # TODO: Find a way how to save geolocation of address
+    address = db.Column(db.Text(), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    def __str__(self):
+        return "<PhotoPlace {}-{}>".format(self.country, self.name)

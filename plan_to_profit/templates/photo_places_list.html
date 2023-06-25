@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h2><a href="{{ url_for('plan_to_profit.create_photo_place') }}">Create Photo Place</a></h2>
+    <h1>{{user.username}}'s Photo Places list:</h1>
+    {% for photo_place in photo_places %}
+        <table class="table table-hover">
+        <tr>
+            <td width="70px">
+                <h2>Name: {{ photo_place.name }}</h2>
+                <h2>Country: {{ photo_place.country }}</h2>
+                <h2>Address: {{ photo_place.address }}</h2>
+                <p><a href="{{ url_for('plan_to_profit.edit_photo_place', photo_place_id=photo_place.id) }}">Edit Photo Place</a></p>
+            </td>
+        </tr>
+        </table>
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Previous Photo Place
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Next Photo Place <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}

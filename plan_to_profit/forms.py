@@ -1,3 +1,4 @@
+import phonenumbers
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -10,8 +11,10 @@ from wtforms.validators import (
     Email,
     EqualTo,
     ValidationError,
+    Optional,
 )
 
+from plan_to_profit.custom_fields import CountrySelectField
 from plan_to_profit.models import User
 
 
@@ -68,3 +71,26 @@ class ResetPasswordForm(FlaskForm):
         "Repeat Password", validators=[DataRequired(), EqualTo("password")]
     )
     submit = SubmitField("Request Password Reset")
+
+
+class ClientForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    phone_number = StringField("Phone number", validators=[DataRequired()])
+    email = StringField("Email", validators=[Optional(), Email()])
+    contact_details = StringField("Contact details")
+    submit = SubmitField("Submit")
+
+    def validate_phone_number(self, phone_number):
+        try:
+            p = phonenumbers.parse(phone_number.data)
+            if not phonenumbers.is_valid_number(p):
+                raise ValueError()
+        except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
+            raise ValidationError("Invalid phone number")
+
+
+class PhotoPlaceForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    country = CountrySelectField("Country", validators=[DataRequired()])
+    address = StringField("Address", validators=[DataRequired()])
+    submit = SubmitField("Submit")
