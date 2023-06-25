@@ -4,6 +4,7 @@
     {{ bootstrap.load_css() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/css/intlTelInput.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/app_base.css') }}"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 {% endblock %}
 
 {% block title %}
@@ -59,4 +60,19 @@
 {% block scripts %}
     {{ bootstrap.load_js() }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/intlTelInput.min.js"></script>
+    <script>
+        function DeleteObject(delete_html) {
+            let result = confirm("Are you sure? This will permanently delete this thing!");
+            if (result) {
+                $.ajax({
+                    url: delete_html,
+                    type: 'DELETE',
+                    success : function (data) {
+                        location.href = "{{ url_for('plan_to_profit.clients_list') }}"
+                    }
+                })
+            }
+        }
+
+    </script>
 {% endblock %}

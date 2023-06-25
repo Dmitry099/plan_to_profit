@@ -6,9 +6,11 @@ from flask import (
     redirect,
     url_for,
     request,
+    jsonify,
 )
 from flask_login import current_user, login_user, logout_user, login_required
 from phonenumbers import region_code_for_country_code
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy_utils import PhoneNumber
 from werkzeug.urls import url_parse
 
@@ -219,6 +221,24 @@ def edit_client(client_id):
     )
 
 
+@plan_to_profit.route("/remove_client/<client_id>", methods=["DELETE"])
+@login_required
+def remove_client(client_id):
+    error = False
+    client = Client.query.filter_by(id=client_id).first()
+    try:
+        db.session.delete(client)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        error = True
+        flash(f"An error occurred. Client {client} could not be deleted!")
+        db.session.rollback()
+        print(e)
+    if not error:
+        flash(f"Client {client} was successfully deleted!.")
+    return jsonify({"success": True})
+
+
 @plan_to_profit.route("/photo_place_list")
 @login_required
 def photo_place_list():
@@ -297,3 +317,23 @@ def edit_photo_place(photo_place_id):
     return render_template(
         "photo_place_editor.html", title="Edit Photo Place", form=form
     )
+
+
+@plan_to_profit.route(
+    "/remove_photo_place/<photo_place_id>", methods=["DELETE"]
+)
+@login_required
+def remove_photo_place(photo_place_id):
+    error = False
+    client = PhotoPlace.query.filter_by(id=photo_place_id).first()
+    try:
+        db.session.delete(client)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        error = True
+        flash(f"An error occurred. Photo place {client} could not be deleted!")
+        db.session.rollback()
+        print(e)
+    if not error:
+        flash(f"Photo place {client} was successfully deleted!.")
+    return jsonify({"success": True})

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h2><a href="{{ url_for('plan_to_profit.create_photo_place') }}">Create Photo Place</a></h2>
+    <h2><a class="btn btn-primary" href="{{ url_for('plan_to_profit.create_photo_place') }}">Create Photo Place</a></h2>
     <h1>{{user.username}}'s Photo Places list:</h1>
     {% for photo_place in photo_places %}
         <table class="table table-hover">
@@ -10,7 +10,8 @@
                 <h2>Name: {{ photo_place.name }}</h2>
                 <h2>Country: {{ photo_place.country }}</h2>
                 <h2>Address: {{ photo_place.address }}</h2>
-                <p><a href="{{ url_for('plan_to_profit.edit_photo_place', photo_place_id=photo_place.id) }}">Edit Photo Place</a></p>
+                <p><a class="btn btn-primary" href="{{ url_for('plan_to_profit.edit_photo_place', photo_place_id=photo_place.id) }}">Edit Photo Place</a></p>
+                <button type="button" class="btn btn-primary" onclick=DeleteObject("{{url_for('plan_to_profit.remove_photo_place',photo_place_id=photo_place.id)}}")>Delete Photo Place</button>
             </td>
         </tr>
         </table>
